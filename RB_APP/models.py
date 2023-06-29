@@ -7,14 +7,14 @@ class User(models.Model):
     last_name = models.CharField(max_length=256, db_column='last_name', null=False, blank=False)
     password = ()
     phone_number = models.CharField(max_length=256, db_column='phone_number', null=False, blank=False)
-    email_address = models.EmailField(max_length=256,db_column='email_address',null=True, blank=True, validators=EmailValidator)
+    email_address = models.EmailField(max_length=256,db_column='email_address',null=False, blank=False, validators=[EmailValidator()])
 
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
     class Meta:
-        db_table = 'users'
+        db_table = 'Users'
 
 
 class Restaurant(models.Model):
@@ -41,5 +41,14 @@ class Reservation(models.Model):
     request_creation = models.DateTimeField(auto_now_add=True)
     user_comment = models.CharField(max_length=256)
     party_size = models.PositiveIntegerField(null=False, blank=False, validators=[MinValueValidator(1)])
+    is_smoking = models.BooleanField(null=True, blank=True)
+    approved = models.BooleanField(null=True, blank=True)
+    table_id = models.SmallIntegerField(null=True, blank=True)
 
 
+
+    def __str__(self):
+        return f"{self.user_id} {self.restaurant_id} {self.reservation_date} {self.reservation_time}"
+
+    class Meta:
+        db_table = 'Reservations'
