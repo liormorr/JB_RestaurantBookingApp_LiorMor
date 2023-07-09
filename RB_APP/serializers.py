@@ -9,6 +9,13 @@ class ReservationSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class WriteReservationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Reservation
+        fields = '__all__'
+        depth = 1
+
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User

@@ -22,7 +22,7 @@ class Restaurant(models.Model):
     description = models.TextField(max_length=256, db_column='description', null=False, blank=False)
     location = models.CharField(max_length=256, db_column='location', null=False, blank=False)
     address = models.CharField(max_length=256, db_column='address', null=False, blank=False)
-    approval_status = models.BooleanField(null=False, blank=False)
+    approval_status = models.BooleanField(null=True, blank=True)
     phone_number = models.CharField(max_length=20, db_column='phone_number', null=False, blank=False)
 
     def __str__(self):
@@ -30,7 +30,6 @@ class Restaurant(models.Model):
 
     class Meta:
         db_table = 'Restaurants'
-
 
 
 class Reservation(models.Model):

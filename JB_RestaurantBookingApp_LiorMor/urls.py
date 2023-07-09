@@ -16,6 +16,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from RB_APP.views import create_user, create_reservation, create_restaurant
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+path('api/users/create/', create_user, name='create_user'),
+path('api/reservations/create/', create_reservation, name='create_reservation'),
+path('api/restaurants/create/', create_restaurant, name='create_restaurant'),
 ]
