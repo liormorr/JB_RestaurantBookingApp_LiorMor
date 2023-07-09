@@ -3,19 +3,9 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from RB_APP.models import User, Reservation
+from RB_APP.models import User, Reservation, Restaurant
 from RB_APP.serializers import ReservationSerializer, WriteReservationSerializer, RestaurantSerializer
 
-
-@api_view(['PUT'])
-def create_reservation(request):
-    full_data = request.data.copy()
-    serializer = ReservationSerializer(data=full_data)
-    if serializer.is_valid(raise_exception=True):
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    else:
-        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 def get_reservation_information(request, reservation_id):
@@ -25,6 +15,48 @@ def get_reservation_information(request, reservation_id):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+
+@api_view(['POST'])
+def create_reservation(request):
+    serializer = ReservationSerializer(data=request.data)
+    if serializer.is_valid(raise_exception=True):
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def create_restaurant(request):
+    serializer = RestaurantSerializer(data=request.data)
+
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['PATCH'])
+def update_restaurant(request, restaurant_id):
+    try:
+        restaurant = Restaurant.objects.get(id=restaurant_id)
+    except Restaurant.DoesNotExist:
+        return Response({'error': 'Restaurant not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = RestaurantSerializer(restaurant, data=request.data, partial=True)
+
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
 
 
 @api_view(['POST'])
@@ -44,24 +76,3 @@ def create_user(request):
         return Response({'message': 'User created successfully.'}, status=status.HTTP_201_CREATED)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-@api_view(['POST'])
-def create_reservation(request):
-    serializer = ReservationSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    else:
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-@api_view(['POST'])
-def create_restaurant(request):
-    serializer = RestaurantSerializer(data=request.data)
-
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

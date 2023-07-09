@@ -19,11 +19,14 @@ class User(models.Model):
 
 class Restaurant(models.Model):
     name = models.CharField(max_length=256, db_column='name', null=False, blank=False)
-    description = models.TextField(max_length=256, db_column='description', null=False, blank=False)
+    description = models.TextField(max_length=356, db_column='description', null=False, blank=False)
     location = models.CharField(max_length=256, db_column='location', null=False, blank=False)
     address = models.CharField(max_length=256, db_column='address', null=False, blank=False)
     approval_status = models.BooleanField(null=True, blank=True)
     phone_number = models.CharField(max_length=20, db_column='phone_number', null=False, blank=False)
+    facebook_link = models.URLField(max_length=200, null=True, blank=True)
+    instagram_link = models.URLField(max_length=200, null=True, blank=True)
+    website = models.URLField(max_length=200, null=True, blank=True)
 
     def __str__(self):
         return self.name
