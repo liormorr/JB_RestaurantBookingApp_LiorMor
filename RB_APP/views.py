@@ -2,9 +2,8 @@ from django.shortcuts import render, get_object_or_404
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-
 from RB_APP.models import User, Reservation, Restaurant
-from RB_APP.serializers import ReservationSerializer, WriteReservationSerializer, RestaurantSerializer
+from RB_APP.serializers import ReservationSerializer, WriteReservationSerializer, RestaurantSerializer, UserSerializer
 
 
 @api_view(['GET'])
@@ -55,24 +54,14 @@ def update_restaurant(request, restaurant_id):
 
 
 
-
-
-
-
 @api_view(['POST'])
 def create_user(request):
-    first_name = request.data.get('first_name')
-    last_name = request.data.get('last_name')
-    password = request.data.get('password')
-    phone_number = request.data.get('phone_number')
-    email_address = request.data.get('email_address')
+    serializer = UserSerializer(data=request.data)
+    if serializer.is_valid(raise_exception=True):
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    if not first_name or not last_name or not password or not phone_number or not email_address:
-        return Response({'error': 'All fields are required.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    try:
-        user = User.objects.create(first_name=first_name, last_name=last_name, password=password,
-                                   phone_number=phone_number, email_address=email_address)
-        return Response({'message': 'User created successfully.'}, status=status.HTTP_201_CREATED)
-    except Exception as e:
-        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+

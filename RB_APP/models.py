@@ -1,20 +1,19 @@
 from django.db import models
 from django.core.validators import EmailValidator, MinValueValidator
+from django.contrib.auth.models import AbstractUser, User
+from django.db import models
+from phonenumber_field.formfields import PhoneNumberField
 
 
-class User(models.Model):
-    first_name = models.CharField(max_length=256, db_column='first_name', null=False, blank=False)
-    last_name = models.CharField(max_length=256, db_column='last_name', null=False, blank=False)
-    password = ()
-    phone_number = models.CharField(max_length=256, db_column='phone_number', null=False, blank=False)
-    email_address = models.EmailField(max_length=256,db_column='email_address',null=False, blank=False, validators=[EmailValidator()])
-
+class UserDetails(models.Model):
+    phone_number = PhoneNumberField()
+    user = models.OneToOneField(User,on_delete=models.RESTRICT)
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name}"
+        return f"{self.user.first_name} {self.user.last_name}"
 
     class Meta:
-        db_table = 'Users'
+        db_table = 'DetailedUser'
 
 
 class Restaurant(models.Model):
@@ -23,6 +22,7 @@ class Restaurant(models.Model):
     location = models.CharField(max_length=256, db_column='location', null=False, blank=False)
     address = models.CharField(max_length=256, db_column='address', null=False, blank=False)
     approval_status = models.BooleanField(null=True, blank=True)
+    restaurant_owner = models.ForeignKey(User,null=True, blank=True, on_delete=models.RESTRICT)
     phone_number = models.CharField(max_length=20, db_column='phone_number', null=False, blank=False)
     facebook_link = models.URLField(max_length=200, null=True, blank=True)
     instagram_link = models.URLField(max_length=200, null=True, blank=True)
@@ -36,8 +36,8 @@ class Restaurant(models.Model):
 
 
 class Reservation(models.Model):
-    restaurant_id = models.ForeignKey(Restaurant, on_delete=models.CASCADE, db_column='restaurant_id')
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE, db_column='user_id')
+    restaurant_id = models.ForeignKey(Restaurant, on_delete=models.RESTRICT, db_column='restaurant_id')
+    user_id = models.ForeignKey(User, on_delete=models.RESTRICT, db_column='user_id')
     reservation_date = models.DateField(null=False, blank=False)
     reservation_time = models.TimeField(null=False, blank=False)
     request_creation = models.DateTimeField(auto_now_add=True)

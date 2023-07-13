@@ -15,12 +15,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 from RB_APP.views import create_user, create_reservation, create_restaurant
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-path('api/users/create/', create_user, name='create_user'),
-path('api/reservations/create/', create_reservation, name='create_reservation'),
-path('api/restaurants/create/', create_restaurant, name='create_restaurant'),
+path('api/create/user/', create_user, name='create_user'),
+path('api/create/reservation/', create_reservation, name='create_reservation'),
+path('api/create/restaurant/', create_restaurant, name='create_restaurant'),
+path('api/auth/login', TokenObtainPairView().as_view()),
+path('api/auth/signup', create_user, name='signup')
 ]
