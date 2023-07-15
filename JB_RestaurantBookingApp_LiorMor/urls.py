@@ -25,5 +25,5 @@ path('api/create/user/', create_user, name='create_user'),
 path('api/create/reservation/', create_reservation, name='create_reservation'),
 path('api/create/restaurant/', create_restaurant, name='create_restaurant'),
 path('api/auth/login', TokenObtainPairView().as_view()),
-path('api/auth/signup', create_user, name='signup')
+path('api/auth/signup', create_user, name='create_user')
 ]

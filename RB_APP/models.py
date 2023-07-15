@@ -6,8 +6,8 @@ from phonenumber_field.formfields import PhoneNumberField
 
 
 class UserDetails(models.Model):
-    phone_number = PhoneNumberField()
-    user = models.OneToOneField(User,on_delete=models.RESTRICT)
+    phone_number = models.CharField(max_length=15)
+    user = models.OneToOneField(User,on_delete=models.RESTRICT,related_name='details')
 
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name}"
@@ -41,7 +41,7 @@ class Reservation(models.Model):
     reservation_date = models.DateField(null=False, blank=False)
     reservation_time = models.TimeField(null=False, blank=False)
     request_creation = models.DateTimeField(auto_now_add=True)
-    user_comment = models.CharField(max_length=256)
+    user_comment = models.CharField(max_length=256, null=True, blank=True)
     party_size = models.PositiveIntegerField(null=False, blank=False, validators=[MinValueValidator(1)])
     is_smoking = models.BooleanField(null=True, blank=True)
     approved = models.BooleanField(null=True, blank=True)

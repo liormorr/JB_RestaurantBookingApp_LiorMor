@@ -24,26 +24,23 @@ class RestaurantSerializer(serializers.ModelSerializer):
         model = Restaurant
         fields = '__all__'
 
-class UserSerializer(ModelSerializer):
 
-    password = serializers.CharField(
-        max_length=128, validators=[validate_password], write_only=True)
+
+class DetailedUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserDetails
+        fields = ['phone_number']
+
+class UserSerializer(serializers.ModelSerializer):
+    details = DetailedUserSerializer()
 
     class Meta:
         model = User
-        fields = '__all__'
-        extra_kwargs = {
-            'email': {'required': True},
-            'username': {'read_only': True},
-
-        }
+        fields = ['username', 'password', 'email', 'details']
         validators = [UniqueTogetherValidator(User.objects.all(), ['email'])]
 
     def create(self, validated_data):
-        user = User.objects.create(username=validated_data['email'],
-                                   email=validated_data['email'],
-                                   first_name=validated_data.get('first_name', ''),
-                                   last_name=validated_data.get('last_name', ''))
-        user.set_password(validated_data['password'])
-        user.save()
+        profile_details = validated_data.pop('details')
+        user = User.objects.create_user(**validated_data)
+        UserDetails.objects.create(user=user, **profile_details)
         return user
