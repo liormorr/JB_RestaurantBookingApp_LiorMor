@@ -1,8 +1,7 @@
 from django.contrib.auth.password_validation import validate_password
+from django.db import transaction
 from rest_framework import serializers
-from rest_framework.serializers import ModelSerializer
 from rest_framework.validators import UniqueTogetherValidator
-
 from RB_APP.models import Reservation, User, Restaurant, UserDetails
 
 
@@ -29,18 +28,31 @@ class RestaurantSerializer(serializers.ModelSerializer):
 class DetailedUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserDetails
-        fields = ['phone_number']
+        fields = '__all__'
 
 class UserSerializer(serializers.ModelSerializer):
-    details = DetailedUserSerializer()
+    password = serializers.CharField(
+        max_length=128, validators=[validate_password], write_only=True)
+    phone_number = serializers.CharField(
+        required=True, max_length=256, write_only=True
+    )
 
     class Meta:
         model = User
-        fields = ['username', 'password', 'email', 'details']
+        fields = ['email', 'password', 'first_name', 'last_name', 'phone_number']
+        extra_kwargs = {
+            'email': {'required': True},
+            'username': {'read_only': True},
+        }
         validators = [UniqueTogetherValidator(User.objects.all(), ['email'])]
 
     def create(self, validated_data):
-        profile_details = validated_data.pop('details')
-        user = User.objects.create_user(**validated_data)
-        UserDetails.objects.create(user=user, **profile_details)
+        with transaction.atomic():
+            user = User.objects.create_user(
+                username=validated_data['email'],
+                email=validated_data['email'],
+                password=validated_data['password'],
+                first_name=validated_data.get('first_name', ''),
+                last_name=validated_data.get('last_name', ''))
+            UserDetails.objects.create(user=user, phone_number=validated_data['phone_number'])
         return user

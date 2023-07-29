@@ -18,6 +18,7 @@ from django.urls import path
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from RB_APP.views import create_user, create_reservation, create_restaurant
+from RB_APP.viewsets import UserViewSet
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,5 +26,7 @@ path('api/create/user/', create_user, name='create_user'),
 path('api/create/reservation/', create_reservation, name='create_reservation'),
 path('api/create/restaurant/', create_restaurant, name='create_restaurant'),
 path('api/auth/login', TokenObtainPairView().as_view()),
-path('api/auth/signup', create_user, name='create_user')
+path('api/auth/signup', create_user, name='create_user'),
+path('user-details/', UserViewSet.as_view(), name='user-details-list'),
+path('user-details/<int:pk>/', UserViewSet.as_view, name='user-details-detail'),
 ]

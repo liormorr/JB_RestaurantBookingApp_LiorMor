@@ -1,7 +1,10 @@
 from django_filters.rest_framework import FilterSet
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins
+from rest_framework.viewsets import GenericViewSet
+import django_filters
+from .models import UserDetails
 from .models import Restaurant, Reservation, User
-from .serializers import RestaurantSerializer, ReservationSerializer, UserSerializer
+from .serializers import RestaurantSerializer, ReservationSerializer, UserSerializer, DetailedUserSerializer
 
 
 class RestaurantFilterSet(FilterSet):
@@ -37,20 +40,26 @@ class ReservationViewSet(viewsets.ModelViewSet):
     filterset_class = ReservationFilterSet
 
 
-class UserFilterSet(FilterSet):
-    class Meta:
-        model = User
-        fields = {
-            'first_name': ['exact', 'icontains'],
-            'last_name': ['exact', 'icontains'],
-            'phone_number': ['exact'],
-            'email_address': ['exact', 'icontains'],
-        }
 
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    filterset_class = UserFilterSet
+class UserDetailsFilter(django_filters.FilterSet):
+    phone_number = django_filters.CharFilter(lookup_expr='icontains')
+    username = django_filters.CharFilter(field_name='user__username', lookup_expr='icontains')
+    first_name = django_filters.CharFilter(field_name='user__first_name', lookup_expr='icontains')
+    last_name = django_filters.CharFilter(field_name='user__last_name', lookup_expr='icontains')
+
+    class Meta:
+        model = UserDetails
+        fields = ['phone_number', 'username', 'first_name', 'last_name']
+
+class UserViewSet(mixins.CreateModelMixin,
+                   mixins.RetrieveModelMixin,
+                   mixins.UpdateModelMixin,
+                   mixins.ListModelMixin,
+                   GenericViewSet):
+
+    queryset = UserDetails.objects.all()
+    serializer_class = DetailedUserSerializer
+    filterset_class = UserDetailsFilter
 
 
 

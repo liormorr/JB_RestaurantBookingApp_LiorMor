@@ -1,13 +1,12 @@
-from django.db import models
 from django.core.validators import EmailValidator, MinValueValidator
 from django.contrib.auth.models import AbstractUser, User
 from django.db import models
-from phonenumber_field.formfields import PhoneNumberField
 
 
 class UserDetails(models.Model):
-    phone_number = models.CharField(max_length=15)
+    phone_number = models.CharField(max_length=200)
     user = models.OneToOneField(User,on_delete=models.RESTRICT,related_name='details')
+
 
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name}"
@@ -27,12 +26,14 @@ class Restaurant(models.Model):
     facebook_link = models.URLField(max_length=200, null=True, blank=True)
     instagram_link = models.URLField(max_length=200, null=True, blank=True)
     website = models.URLField(max_length=200, null=True, blank=True)
+    owners = models.ManyToManyField(UserDetails,related_name='restaurants_owned')
 
     def __str__(self):
         return self.name
 
     class Meta:
         db_table = 'Restaurants'
+        ordering = ['id']
 
 
 class Reservation(models.Model):
@@ -47,10 +48,22 @@ class Reservation(models.Model):
     approved = models.BooleanField(null=True, blank=True)
     table_id = models.SmallIntegerField(null=True, blank=True)
 
-
-
     def __str__(self):
         return f"{self.user_id} {self.restaurant_id} {self.reservation_date} {self.reservation_time}"
 
     class Meta:
         db_table = 'Reservations'
+        ordering = ['user_id']
+
+
+class Table(models.Model):
+    restaurant_id = models.ForeignKey(Restaurant, on_delete=models.RESTRICT, db_column='restaurant_id')
+    seats_number = models.PositiveIntegerField(validators=[MinValueValidator(1)])
+    is_inside = models.BooleanField(null=True, blank=True)
+    smoker = models.BooleanField(null=True, blank=True)
+    bar = models.BooleanField(null=True, blank=True)
+    near_window = models.BooleanField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'Table'
+        ordering = ['id']

@@ -56,7 +56,6 @@ def update_restaurant(request, restaurant_id):
 
 @api_view(['POST'])
 def create_user(request):
-    print(request.data)
     serializer = UserSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
         serializer.save()
