@@ -25,10 +25,7 @@ class RestaurantSerializer(serializers.ModelSerializer):
 
 
 
-class DetailedUserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserDetails
-        fields = '__all__'
+
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
@@ -39,7 +36,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['email', 'password', 'first_name', 'last_name', 'phone_number']
+        fields = ['id','email', 'password', 'first_name', 'last_name', 'phone_number', 'is_staff']
         extra_kwargs = {
             'email': {'required': True},
             'username': {'read_only': True},
@@ -56,3 +53,10 @@ class UserSerializer(serializers.ModelSerializer):
                 last_name=validated_data.get('last_name', ''))
             UserDetails.objects.create(user=user, phone_number=validated_data['phone_number'])
         return user
+
+class DetailedUserSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+    class Meta:
+        model = UserDetails
+        fields = '__all__'
+        depth = 1

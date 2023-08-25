@@ -14,19 +14,27 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from RB_APP.views import create_user, create_reservation, create_restaurant
-from RB_APP.viewsets import UserViewSet
+from RB_APP.views import create_user, create_reservation, create_restaurant, update_restaurant
+from RB_APP.viewsets import UserViewSet, RestaurantViewSet, me
+
+router = DefaultRouter()
+router.register(r'user-details', UserViewSet)
+router.register(r'restaurants', RestaurantViewSet)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-path('api/create/user/', create_user, name='create_user'),
-path('api/create/reservation/', create_reservation, name='create_reservation'),
-path('api/create/restaurant/', create_restaurant, name='create_restaurant'),
-path('api/auth/login', TokenObtainPairView().as_view()),
-path('api/auth/signup', create_user, name='create_user'),
-path('user-details/', UserViewSet.as_view(), name='user-details-list'),
-path('user-details/<int:pk>/', UserViewSet.as_view, name='user-details-detail'),
+    path('api/create/user/', create_user, name='create_user'),
+    path('api/create/reservation/', create_reservation, name='create_reservation'),
+    path('api/create/restaurant/', create_restaurant, name='create_restaurant'),
+    path('api/update/restaurants/<int:restaurant_id>/', update_restaurant, name='update-restaurant'),
+    path('user-details/me', me),
+    # path('api/update/restaurant/', update_restaurant, name='update_restaurant'),
+    path('api/auth/login', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/auth/signup', create_user, name='create_user'),
+    path('', include(router.urls)),
 ]

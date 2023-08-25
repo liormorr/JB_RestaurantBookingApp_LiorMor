@@ -1,20 +1,25 @@
 from django_filters.rest_framework import FilterSet
 from rest_framework import viewsets, mixins
+from rest_framework.permissions import IsAdminUser
 from rest_framework.viewsets import GenericViewSet
 import django_filters
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from .models import UserDetails
 from .models import Restaurant, Reservation, User
 from .serializers import RestaurantSerializer, ReservationSerializer, UserSerializer, DetailedUserSerializer
-
+from rest_framework.response import Response
 
 class RestaurantFilterSet(FilterSet):
+    name = django_filters.CharFilter(lookup_expr='icontains')
     class Meta:
         model = Restaurant
-        fields = {
-            'name': ['exact', 'icontains'],
-            'location': ['exact', 'icontains'],
-            'approval_status': ['exact'],
-        }
+        fields = []
+        # fields = {
+        #     'name': ['icontains'],
+        #     'location': ['exact', 'icontains'],
+        #     'approval_status': ['exact'],
+        # }
 
 class RestaurantViewSet(viewsets.ModelViewSet):
     queryset = Restaurant.objects.all()
@@ -38,6 +43,7 @@ class ReservationViewSet(viewsets.ModelViewSet):
     queryset = Reservation.objects.all()
     serializer_class = ReservationSerializer
     filterset_class = ReservationFilterSet
+    permission_classes = [IsAuthenticated]
 
 
 
@@ -60,7 +66,14 @@ class UserViewSet(mixins.CreateModelMixin,
     queryset = UserDetails.objects.all()
     serializer_class = DetailedUserSerializer
     filterset_class = UserDetailsFilter
+    permission_classes = [IsAdminUser]
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def me(request):
+    detailed_user = request.user.details  # Access the DetailedUser object associated with the authenticated user
+    serializer = DetailedUserSerializer(instance=detailed_user, context={'request': request})
+    return Response(data=serializer.data)
 
 
 
