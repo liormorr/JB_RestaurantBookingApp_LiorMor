@@ -20,12 +20,15 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 from RB_APP.views import create_user, create_reservation, create_restaurant, update_restaurant, reservations_by_user, \
     get_reservation_information
-from RB_APP.viewsets import UserViewSet, RestaurantViewSet, me, CuisineViewSet
+from RB_APP.viewsets import UserViewSet, RestaurantViewSet, me, CuisineViewSet, RestaurantTypeViewSet, \
+    RestaurantOwnerViewSet
 
 router = DefaultRouter()
 router.register(r'user-details', UserViewSet)
 router.register(r'restaurants', RestaurantViewSet)
+router.register(r'restaurant-owners', RestaurantOwnerViewSet)
 router.register(r'cuisine', CuisineViewSet)
+router.register(r'restauranttype', RestaurantTypeViewSet)
 
 
 urlpatterns = [

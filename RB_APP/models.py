@@ -25,11 +25,11 @@ class Restaurant(models.Model):
     name = models.CharField(max_length=256)
     description = models.TextField(max_length=800)
     location = models.CharField(max_length=256)
-    address = models.CharField(max_length=256)
+    address = models.CharField(max_length=256, null=True, blank=True)
     approval_status = models.BooleanField(choices=APPROVAL_CHOICES, null=True, blank=True)
     restaurant_owner = models.ForeignKey(User, null=True, blank=True, on_delete=models.RESTRICT,
                                          related_name='restaurants_owned')
-    phone_number = models.CharField(max_length=20)
+    phone_number = models.CharField(max_length=20, null=True, blank=True)
     facebook_link = models.URLField(max_length=500, null=True, blank=True)
     instagram_link = models.URLField(max_length=500, null=True, blank=True)
     website = models.URLField(max_length=200, null=True, blank=True)
@@ -47,7 +47,13 @@ class Restaurant(models.Model):
         ordering = ['id']
 
 class RestaurantType(models.Model):
-    type = models.CharField(max_length=100, unique=True)
+    ALLOWED_CUISINES = (
+        ('מסעדה', 'Restaurant'),
+        ('בר', 'Bar'),
+        ('יקב', 'Winery'),
+        ('שף פרטי', 'Chef')
+    )
+    type = models.CharField(max_length=100, choices=ALLOWED_CUISINES)
 
     def __str__(self):
         return self.name
