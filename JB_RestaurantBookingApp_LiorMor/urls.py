@@ -18,12 +18,14 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from RB_APP.views import create_user, create_reservation, create_restaurant, update_restaurant
-from RB_APP.viewsets import UserViewSet, RestaurantViewSet, me
+from RB_APP.views import create_user, create_reservation, create_restaurant, update_restaurant, reservations_by_user, \
+    get_reservation_information
+from RB_APP.viewsets import UserViewSet, RestaurantViewSet, me, CuisineViewSet
 
 router = DefaultRouter()
 router.register(r'user-details', UserViewSet)
 router.register(r'restaurants', RestaurantViewSet)
+router.register(r'cuisine', CuisineViewSet)
 
 
 urlpatterns = [
@@ -33,6 +35,8 @@ urlpatterns = [
     path('api/create/restaurant/', create_restaurant, name='create_restaurant'),
     path('api/update/restaurants/<int:restaurant_id>/', update_restaurant, name='update-restaurant'),
     path('user-details/me', me),
+    path('api/user-reservations/<int:user_id>/', reservations_by_user, name='user_reservations'),
+    path('api/reservation/<int:reservation_id>/', get_reservation_information, name='reservation_by_id'),
     # path('api/update/restaurant/', update_restaurant, name='update_restaurant'),
     path('api/auth/login', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/auth/signup', create_user, name='create_user'),

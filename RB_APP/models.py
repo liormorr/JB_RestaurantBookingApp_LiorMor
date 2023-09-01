@@ -36,8 +36,8 @@ class Restaurant(models.Model):
     logo = models.URLField(max_length=1000, null=True, blank=True)
     rest_picture = models.URLField(max_length=1000, null=True, blank=True)
     owners = models.ManyToManyField(UserDetails, related_name='restaurants_owned', blank=True)
-    restaurant_types = models.ManyToManyField('RestaurantType', related_name='restaurants_type', blank=True)
-    cuisines = models.ManyToManyField('Cuisine', related_name='restaurants_cuisine', blank=True)
+    rest_types = models.ManyToManyField('RestaurantType', related_name='type_restaurants', blank=True)
+    cuisine_type = models.ManyToManyField('Cuisine', related_name='cuisines_list', blank=True)
 
     def __str__(self):
         return self.name
@@ -47,8 +47,7 @@ class Restaurant(models.Model):
         ordering = ['id']
 
 class RestaurantType(models.Model):
-    name = models.CharField(max_length=100)
-    restaurants = models.ManyToManyField(Restaurant, related_name='types')
+    type = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
         return self.name
@@ -59,24 +58,25 @@ class RestaurantType(models.Model):
 
 class Cuisine(models.Model):
     ALLOWED_CUISINES = (
-        ('Italian', 'איטלקי'),
-        ('Mexican', 'מקסיקני'),
-        ('Chinese', 'סיני'),
-        ('Japanese', 'יפני'),
-        ('Indian', 'הודי'),
-        ('French', 'צרפתי'),
-        ('Thai', 'תאילנדי'),
-        ('Mediterranean', 'תיכוני'),
-        ('Korean', 'קוריאני'),
-        ('American', 'אמריקאי'),
-        ('Greek', 'יווני'),
-        ('Spanish', 'ספרדי'),
-        ('Vietnamese', 'ויאטנמי'),
-        ('Middle Eastern', 'מזרח תיכוני'),
-        ('Brazilian', 'ברזילאי'),
+        ('איטלקי', 'Italian'),
+        ('מקסיקני', 'Mexican'),
+        ('סיני', 'Chinese'),
+        ('יפני', 'Japanese'),
+        ('הודי', 'Indian'),
+        ('צרפתי', 'French'),
+        ('תאילנדי', 'Thai'),
+        ('תיכוני', 'Mediterranean'),
+        ('קוריאני', 'Korean'),
+        ('אמריקאי', 'American'),
+        ('יווני', 'Greek'),
+        ('ספרדי', 'Spanish'),
+        ('ויאטנמי', 'Vietnamese'),
+        ('מזרח תיכוני', 'Middle Eastern'),
+        ('ברזילאי', 'Brazilian'),
+        ('ארגנטינאי', 'Argentinian'),
     )
     name = models.CharField(max_length=100, choices=ALLOWED_CUISINES)
-    restaurants = models.ManyToManyField(Restaurant, related_name='cuisines_list')
+
 
     def __str__(self):
         return self.name
@@ -96,7 +96,7 @@ class Reservation(models.Model):
     bar = models.BooleanField(null=True, blank=True)
     outside = models.BooleanField(null=True, blank=True)
     approved = models.BooleanField(null=True, blank=True)
-    table_id = models.SmallIntegerField(null=True, blank=True)
+    table = models.ForeignKey('Table', null=True, blank=True, on_delete=models.RESTRICT)
 
 
     def __str__(self):

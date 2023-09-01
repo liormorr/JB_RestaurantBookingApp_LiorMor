@@ -2,7 +2,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.db import transaction
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
-from RB_APP.models import Reservation, User, Restaurant, UserDetails
+from RB_APP.models import Reservation, User, Restaurant, UserDetails, Cuisine
 
 
 class ReservationSerializer(serializers.ModelSerializer):
@@ -10,6 +10,10 @@ class ReservationSerializer(serializers.ModelSerializer):
         model = Reservation
         fields = '__all__'
 
+class CuisineSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cuisine
+        fields = ['name']
 
 class WriteReservationSerializer(serializers.ModelSerializer):
     class Meta:

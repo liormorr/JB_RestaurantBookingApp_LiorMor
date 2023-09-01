@@ -5,9 +5,10 @@ from rest_framework.viewsets import GenericViewSet
 import django_filters
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from .models import UserDetails
+from .models import UserDetails, Cuisine
 from .models import Restaurant, Reservation, User
-from .serializers import RestaurantSerializer, ReservationSerializer, UserSerializer, DetailedUserSerializer
+from .serializers import RestaurantSerializer, ReservationSerializer, UserSerializer, DetailedUserSerializer, \
+    CuisineSerializer
 from rest_framework.response import Response
 
 class RestaurantFilterSet(FilterSet):
@@ -45,6 +46,11 @@ class ReservationViewSet(viewsets.ModelViewSet):
     filterset_class = ReservationFilterSet
     permission_classes = [IsAuthenticated]
 
+
+
+class CuisineViewSet(viewsets.ModelViewSet):
+    queryset = Cuisine.objects.all()
+    serializer_class = CuisineSerializer
 
 
 class UserDetailsFilter(django_filters.FilterSet):

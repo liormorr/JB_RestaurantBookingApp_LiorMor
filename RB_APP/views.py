@@ -9,11 +9,17 @@ from RB_APP.serializers import ReservationSerializer, WriteReservationSerializer
 @api_view(['GET'])
 def get_reservation_information(request, reservation_id):
     reservation = get_object_or_404(Reservation, id=reservation_id)
-    serializer = WriteReservationSerializer(reservation)
-    if serializer.is_valid(raise_exception=True):
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    else:
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+    serializer = ReservationSerializer(reservation)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def reservations_by_user(request, user_id):
+    try:
+        reservations = Reservation.objects.filter(user_id=user_id)
+        serializer = ReservationSerializer(reservations, many=True)
+        return Response(serializer.data)
+    except Reservation.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 
