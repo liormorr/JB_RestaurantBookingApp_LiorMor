@@ -14,6 +14,8 @@ from rest_framework.decorators import action
 
 class RestaurantFilterSet(FilterSet):
     name = django_filters.CharFilter(lookup_expr='icontains')
+    location = django_filters.CharFilter(lookup_expr='icontains')
+    cuisine_type = django_filters.CharFilter(lookup_expr='icontains')
     rest_types = django_filters.ModelMultipleChoiceFilter(
         field_name='rest_types',
         to_field_name='id',

@@ -1,6 +1,11 @@
 django~=4.1.7
-psycopg2
-
+# psycopg2
+psycopg2-binary
 djangorestframework~=3.14.0
 django-filter~=23.2
 djangorestframework-simplejwt
+django-cors-headers
+gunicorn
+google-cloud-storage
+requests
+google-auth

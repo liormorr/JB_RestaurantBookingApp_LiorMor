@@ -35,7 +35,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/create/user/', create_user, name='create_user'),
     path('api/create/reservation/', create_reservation, name='create_reservation'),
-    path('api/create/restaurant/', create_restaurant, name='create_restaurant'),
+    # path('api/create/restaurant/', create_restaurant, name='create_restaurant'),
     path('api/update/restaurants/<int:restaurant_id>/', update_restaurant, name='update-restaurant'),
     path('user-details/me', me),
     path('api/user-reservations/<int:user_id>/', reservations_by_user, name='user_reservations'),
